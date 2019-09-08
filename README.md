@@ -5,7 +5,7 @@
 
 <br>
 
-##### Pricing Reference: https://cloud.google.com/compute/vm-instance-pricing#n2_machine_types
+##### Pricing Reference: https://cloud.google.com/compute/vm-instance-pricing#n1_predefined
 
 <br>
 
