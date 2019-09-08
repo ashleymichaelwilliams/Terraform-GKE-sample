@@ -97,6 +97,9 @@ resource "google_container_cluster" "kubernetes-cluster" {
   }
 
   lifecycle {
-    ignore_changes = []
+    ignore_changes = [
+      node_version,
+      node_locations
+    ]
   }
 }
