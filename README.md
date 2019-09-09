@@ -9,10 +9,40 @@
 
 <br>
 
+##### Commands below have been tested and known to work on CentOS7 operating system
+
 ```
-# Set Variables
-PROJECT_NAME='Test-Proj-001'
+# Install Custom YUM Repository for Google Cloud SDK
+sudo tee -a /etc/yum.repos.d/google-cloud-sdk.repo << EOM
+[google-cloud-sdk]
+name=Google Cloud SDK
+baseurl=https://packages.cloud.google.com/yum/repos/cloud-sdk-el7-x86_64
+enabled=1
+gpgcheck=1
+repo_gpgcheck=1
+gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg
+       https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+EOM
+
+
+# Installs the Google Cloud SDK package
+yum install google-cloud-sdk
+
+
+# Authenticate to Google Cloud in active terminal shell
+gcloud auth application-default login
+
+
+# Change your path to the Terraform Environment directory within the project repository
+cd terraform/env-dev-us-central1
+
+
+# Set Environment Variables
+PROJECT_NAME='test-gke-proj-001'
 BILLING_ACCOUNT='123456-123456-123456'
+
+
+## NOTE: Run the following commands synchronously allowing them to complete, as you might experience a race-condition behavior otherwise.
 
 # GCP Project Creation, Billing and API Library
 gcloud projects create $PROJECT_NAME --name=$PROJECT_NAME
@@ -25,4 +55,3 @@ terraform init
 terraform import google_project.project $PROJECT_NAME
 terraform apply -auto-approve
 ```
-
