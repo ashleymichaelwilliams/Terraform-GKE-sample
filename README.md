@@ -28,15 +28,19 @@ EOM
 # Installs the Google Cloud SDK package
 yum install google-cloud-sdk
 
+# Installs the kubectl package
+yum install kubectl
+
 
 # Authenticate to Google Cloud in active terminal shell
+gcloud init
 gcloud auth application-default login
 
 
 # Set Environment Variables
 PROJECT_NAME='test-gke-proj-001'
 BILLING_ACCOUNT='123456-123456-123456'
-GCS_BUCKET='my_gcs_bucket_name'
+GCS_BUCKET='gcs_bucket_name'
 
 
 ## NOTE: You will need to rename the terraform.tfvars file and replace the Billing Account example value with your Billing Account.
