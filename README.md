@@ -33,13 +33,14 @@ yum install google-cloud-sdk
 gcloud auth application-default login
 
 
-# Change your path to the Terraform Environment directory within the project repository
-cd terraform/env-dev-us-central1
-
-
 # Set Environment Variables
 PROJECT_NAME='test-gke-proj-001'
 BILLING_ACCOUNT='123456-123456-123456'
+
+
+## NOTE: You will need to rename the terraform.tfvars file and replace the Billing Account example value with your Billing Account.
+cp terraform/terraform.tfvars.json.sample terraform/terraform.tfvars.json
+sed -i "s/123456-123456-123456/$BILLING_ACCOUNT/" terraform/terraform.tfvars.json
 
 
 ## NOTE: Run the following commands synchronously allowing them to complete, as you might experience a race-condition behavior otherwise.
@@ -48,6 +49,9 @@ BILLING_ACCOUNT='123456-123456-123456'
 gcloud projects create $PROJECT_NAME --name=$PROJECT_NAME
 gcloud alpha billing projects link $PROJECT_NAME --billing-account=$BILLING_ACCOUNT
 gcloud --project=$PROJECT_NAME services enable compute.googleapis.com
+
+# Change your path to the Terraform Environment directory within the project repository
+cd terraform/env-dev-us-central1
 
 # Create Terraform Workspace, Init, Import and Apply
 terraform workspace new $PROJECT_NAME
