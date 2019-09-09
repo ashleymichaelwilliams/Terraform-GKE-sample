@@ -36,6 +36,7 @@ gcloud auth application-default login
 # Set Environment Variables
 PROJECT_NAME='test-gke-proj-001'
 BILLING_ACCOUNT='123456-123456-123456'
+GCS_BUCKET='my_gcs_bucket_name'
 
 
 ## NOTE: You will need to rename the terraform.tfvars file and replace the Billing Account example value with your Billing Account.
@@ -55,7 +56,7 @@ cd terraform/env-dev-us-central1
 
 # Create Terraform Workspace, Init, Import and Apply
 terraform workspace new $PROJECT_NAME
-terraform init
+terraform init -backend-config="bucket=$GCS_BUCKET"
 terraform import google_project.project $PROJECT_NAME
 terraform apply -auto-approve
 ```

@@ -4,7 +4,7 @@
 ### Load TF Storage Backend
 terraform {
   backend "gcs" {
-    bucket = "awilliams-terraform-state"
+#    bucket = "gcs_bucket_name"
     prefix = "terraform/state"
   }
 }
