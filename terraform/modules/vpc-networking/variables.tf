@@ -1,4 +1,4 @@
-# Module: vpc-networking
+# Module: vpc-networking/
 # File: variables.tf
 
 

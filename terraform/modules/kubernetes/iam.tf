@@ -1,4 +1,4 @@
-# Module: gke
+# Module: kubernetes/
 # File: iam.tf
 
 
@@ -7,6 +7,7 @@ resource "google_service_account" "kubernetes-service-account" {
   account_id   = "gke-service-account"
   display_name = "Kubernetes Service Account"
 }
+
 
 
 resource "google_project_iam_member" "kubernetes-service-account-editor" {

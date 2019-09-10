@@ -1,19 +1,21 @@
-# Module: gke
-# File: gke.tf
+# Module: kubernetes/
+# File: kubernetes.tf
 
 
-
-resource "google_project_service" "container" {
-  project    = "${terraform.workspace}"
-  service    = "container.googleapis.com"
-}
 
 resource "google_project_service" "compute" {
   project    = "${terraform.workspace}"
   service    = "compute.googleapis.com"
 }
 
+resource "google_project_service" "container" {
+  project    = "${terraform.workspace}"
+  service    = "container.googleapis.com"
+}
 
+
+
+# Collect Availability Zones
 data "google_compute_zones" "available" {
   provider = "google-beta"
   depends_on = [ "google_project_service.compute" ]
@@ -21,12 +23,16 @@ data "google_compute_zones" "available" {
 }
 
 
+
+# Setting local variables for the sake of reusability of resouces described below
 locals { 
   kubernetes_version = "1.13"
   instance-type      = "n1-standard-2"
 }
 
 
+
+# Create Kubernetes Cluster (Masters Only!)
 resource "google_container_cluster" "kubernetes-cluster" {
   provider = "google-beta"
   depends_on = [
@@ -61,7 +67,7 @@ resource "google_container_cluster" "kubernetes-cluster" {
   node_config {
     tags = ["kubernetes"]
     preemptible  = true
-    machine_type = "n1-standard-2"
+    machine_type = "${local.instance-type}"
     disk_size_gb = 50
     oauth_scopes = [
       "cloud-platform"
@@ -123,7 +129,7 @@ resource "google_container_cluster" "kubernetes-cluster" {
 }
 
 
-
+# Create Kubernetes Node Pool
 resource "google_container_node_pool" "node-pool-a" {
   provider = "google-beta"
   depends_on = [

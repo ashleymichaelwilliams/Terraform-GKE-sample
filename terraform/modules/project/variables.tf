@@ -1,4 +1,4 @@
-# Module: project
+# Module: project/
 # File: variables.tf
 
 

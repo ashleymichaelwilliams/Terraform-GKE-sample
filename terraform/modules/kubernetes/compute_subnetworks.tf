@@ -1,4 +1,4 @@
-# Module: gke
+# Module: kubernetes/
 # File: compute_subnetworks.tf
 
 
