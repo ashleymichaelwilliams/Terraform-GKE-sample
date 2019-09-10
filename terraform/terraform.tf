@@ -22,6 +22,9 @@ provider "google-beta" {
    version     = "2.14"
 }
 
+provider "external" {
+   version     = "1.2"
+}
 
 
 ### Load GCP Project Resource

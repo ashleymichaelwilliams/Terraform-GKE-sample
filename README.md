@@ -59,8 +59,8 @@ gcloud --project=$PROJECT_NAME services enable compute.googleapis.com
 cd terraform/env-dev-us-central1
 
 # Create Terraform Workspace, Init, Import and Apply
-terraform workspace new $PROJECT_NAME
 terraform init -backend-config="bucket=$GCS_BUCKET"
+terraform workspace new $PROJECT_NAME
 terraform import google_project.project $PROJECT_NAME
 terraform apply -auto-approve
 ```

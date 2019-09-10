@@ -23,12 +23,15 @@ data "google_compute_zones" "available" {
 
 locals { 
   kubernetes_version = "1.13"
+  instance-type      = "n1-standard-2"
 }
 
 
 resource "google_container_cluster" "kubernetes-cluster" {
   provider = "google-beta"
   depends_on = [
+    "google_project_iam_member.kubernetes-service-account-editor",
+    "google_service_account.kubernetes-service-account",
     "google_project_service.container",
     "google_compute_subnetwork.vpc_subnet_kubernetes",
     "data.google_compute_zones.available"
@@ -45,7 +48,6 @@ resource "google_container_cluster" "kubernetes-cluster" {
   min_master_version = "${local.kubernetes_version}"
   node_version = "${local.kubernetes_version}"
 
-  #network = "${module.vpc-networking.compute_network.compute_network.name}"
   network = "${var.compute_network}"
   subnetwork = "${google_compute_subnetwork.vpc_subnet_kubernetes.name}"
   ip_allocation_policy {
@@ -54,18 +56,19 @@ resource "google_container_cluster" "kubernetes-cluster" {
   }
  
   initial_node_count = 1
+  remove_default_node_pool = true
 
   node_config {
     tags = ["kubernetes"]
     preemptible  = true
     machine_type = "n1-standard-2"
-    disk_size_gb    = 50
+    disk_size_gb = 50
     oauth_scopes = [
       "cloud-platform"
     ]
-
+    service_account = "${google_service_account.kubernetes-service-account.email}"
     labels = {
-      "cloud.google.com/gke-preemptible" = "true"
+      "cloud.google.com/gke-preemptible"   = "true"
     }
   }
 
@@ -85,9 +88,23 @@ resource "google_container_cluster" "kubernetes-cluster" {
   logging_service    = "logging.googleapis.com/kubernetes"
 
   addons_config {
-    kubernetes_dashboard {
-      disabled = false
+    http_load_balancing {
+      disabled   = false
     }
+    kubernetes_dashboard {
+      disabled   = false
+    }
+    horizontal_pod_autoscaling {
+      disabled   = false
+    }
+    istio_config {
+      disabled   = false
+      auth       = "AUTH_NONE"
+    }
+  }
+
+  vertical_pod_autoscaling {
+    enabled      = true
   }
 
   maintenance_policy {
@@ -99,7 +116,60 @@ resource "google_container_cluster" "kubernetes-cluster" {
   lifecycle {
     ignore_changes = [
       node_version,
-      node_locations
+      node_locations,
+      node_pool,
+    ]
+  }
+}
+
+
+
+resource "google_container_node_pool" "node-pool-a" {
+  provider = "google-beta"
+  depends_on = [
+    "google_project_iam_member.kubernetes-service-account-editor",
+    "google_service_account.kubernetes-service-account",
+    "google_container_cluster.kubernetes-cluster",
+    "google_project_service.container",
+    "google_compute_subnetwork.vpc_subnet_kubernetes",
+    "data.google_compute_zones.available"
+  ]
+
+  cluster      = "${google_container_cluster.kubernetes-cluster.name}"
+  name         = "k8s-node-pool-${local.instance-type}-a"
+  location     = "${var.region["single"]}"
+
+  version = "${local.kubernetes_version}"
+
+  initial_node_count = 1
+
+  node_config {
+    tags = ["kubernetes"]
+    preemptible  = true
+    machine_type = "${local.instance-type}"
+    disk_size_gb = 50
+    oauth_scopes = [
+      "cloud-platform"
+    ]
+    service_account = "${google_service_account.kubernetes-service-account.email}"
+    labels = {
+      "cloud.google.com/gke-preemptible" = "true"
+    }
+  }
+
+  autoscaling {
+    min_node_count = 1
+    max_node_count = 10
+  }
+
+  management {
+    auto_repair    = true
+    auto_upgrade   = true 
+  }
+
+  lifecycle {
+    ignore_changes = [
+      version
     ]
   }
 }
