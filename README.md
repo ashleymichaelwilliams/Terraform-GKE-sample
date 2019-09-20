@@ -9,7 +9,7 @@
 
 <br>
 
-##### Commands below have been tested and known to work on CentOS7 operating system
+##### The following commands below have been tested and known to work on CentOS7 operating system
 
 ```
 # Install Custom YUM Repository for Google Cloud SDK
@@ -32,8 +32,11 @@ yum install google-cloud-sdk
 yum install kubectl
 
 
+# Change directories to Git Project
+cd ~/Repos/Terraform-GKE-sample
+
 # Authenticate to Google Cloud in active terminal shell
-gcloud init
+gcloud auth login
 gcloud auth application-default login
 
 
@@ -43,24 +46,71 @@ BILLING_ACCOUNT='123456-123456-123456'
 GCS_BUCKET='gcs_bucket_name'
 
 
-## NOTE: You will need to rename the terraform.tfvars file and replace the Billing Account example value with your Billing Account.
+## NOTE: You will need to copy or rename the terraform.tfvars.sample file and replace the Billing Account value with your Billing Account.
 cp terraform/terraform.tfvars.json.sample terraform/terraform.tfvars.json
+
+### Run this if using CentOS Linux
 sed -i "s/123456-123456-123456/$BILLING_ACCOUNT/" terraform/terraform.tfvars.json
 
 
-## NOTE: Run the following commands synchronously allowing them to complete, as you might experience a race-condition behavior otherwise.
-
-# GCP Project Creation, Billing and API Library
-gcloud projects create $PROJECT_NAME --name=$PROJECT_NAME
-gcloud alpha billing projects link $PROJECT_NAME --billing-account=$BILLING_ACCOUNT
-gcloud --project=$PROJECT_NAME services enable compute.googleapis.com
-
 # Change your path to the Terraform Environment directory within the project repository
 cd terraform/env-dev-us-central1
+
+# Create Symbolic Link to Terraform Variables File
+ln -s ../terraform.tfvars.json terraform.tfvars.json
 
 # Create Terraform Workspace, Init, Import and Apply
 terraform init -backend-config="bucket=$GCS_BUCKET"
 terraform workspace new $PROJECT_NAME
 terraform import google_project.project $PROJECT_NAME
+terraform apply -auto-approve
+```
+
+<br>
+
+
+##### The following commands below have been tested and known to work on Mac OSX operating system
+
+```
+cd ~/Downloads/
+
+GCLOUD_SDK_FILENAME='google-cloud-sdk-263.0.0-darwin-x86_64'
+curl -s https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/$GCLOUD_SDK_FILENAME.tar.gz --output $GCLOUD_SDK_FILENAME.tar.gz
+gunzip -c $GCLOUD_SDK_FILENAME.tar.gz | tar xopf -
+
+cd ~/Downloads/google-cloud-sdk/
+./install.sh -q --additional-components kubectl
+
+
+# Change directories to Git Project
+cd ~/Repos/Terraform-GKE-sample
+
+# Authenticate to Google Cloud in active terminal shell
+gcloud auth login
+gcloud auth application-default login
+
+
+# Set Environment Variables
+PROJECT_NAME='test-gke-proj-001'
+BILLING_ACCOUNT='123456-123456-123456'
+GCS_BUCKET='gcs_bucket_name'
+
+
+## NOTE: You will need to copy or rename the terraform.tfvars.sample file and replace the Billing Account value with your Billing Account.
+cp terraform/terraform.tfvars.json.sample terraform/terraform.tfvars.json
+
+### Run this if using Mac OSX
+sed -ie 's|123456-123456-123456|'"${BILLING_ACCOUNT}"'|g' terraform/terraform.tfvars.json
+
+
+# Change your path to the Terraform Environment directory within the project repository
+cd terraform/env-dev-us-central1
+
+# Create Symbolic Link to Terraform Variables File
+ln -s ../terraform.tfvars.json terraform.tfvars.json
+
+# Create Terraform Workspace, Init, Import and Apply
+terraform init -backend-config="bucket=$GCS_BUCKET"
+terraform workspace new $PROJECT_NAME
 terraform apply -auto-approve
 ```

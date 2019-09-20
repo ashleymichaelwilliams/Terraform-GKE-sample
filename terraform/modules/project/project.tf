@@ -2,4 +2,13 @@
 # File: project.tf
 
 
-### Note: The Google Project resources needed to be declared in the terraform.tf file since it needed to be imported, which is located in the parent '../../terraform.tf' folder.
+
+# Declare Project Resource (as it needs to be imported!)
+resource "google_project" "project" {
+  name                  = "${terraform.workspace}"
+  project_id            = "${terraform.workspace}"
+  billing_account       = "${var.billing_account}"
+  auto_create_network   = true
+  skip_delete           = true
+}
+
