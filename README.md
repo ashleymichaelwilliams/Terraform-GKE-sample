@@ -9,6 +9,8 @@
 
 <br>
 
+#### Preparation
+
 ##### The following commands below have been tested and known to work on CentOS7 operating system
 
 ```
@@ -40,29 +42,13 @@ gcloud auth login
 gcloud auth application-default login
 
 
-# Set Environment Variables
-PROJECT_NAME='test-gke-proj-001'
-BILLING_ACCOUNT='123456-123456-123456'
-GCS_BUCKET='gcs_bucket_name'
-
-
 ## NOTE: You will need to copy or rename the terraform.tfvars.sample file and replace the Billing Account value with your Billing Account.
+
+# Set Environment Variables
+BILLING_ACCOUNT='123456-123456-123456'
+
 cp terraform/terraform.tfvars.json.sample terraform/terraform.tfvars.json
-
-### Run this if using CentOS Linux
 sed -i "s/123456-123456-123456/$BILLING_ACCOUNT/" terraform/terraform.tfvars.json
-
-
-# Change your path to the Terraform Environment directory within the project repository
-cd terraform/env-dev-us-central1
-
-# Create Symbolic Link to Terraform Variables File
-# ln -s ../terraform.tfvars.json terraform.tfvars.json # This is no longer necessary as we preserved the symbolic link in the git repository
-
-# Create Terraform Workspace, Init, Import and Apply
-terraform init -backend-config="bucket=$GCS_BUCKET"
-terraform workspace new $PROJECT_NAME
-terraform apply -auto-approve
 ```
 
 <br>
@@ -92,24 +78,26 @@ gcloud auth login
 gcloud auth application-default login
 
 
-# Set Environment Variables
-PROJECT_NAME='test-gke-proj-001'
-BILLING_ACCOUNT='123456-123456-123456'
-GCS_BUCKET='gcs_bucket_name'
-
-
 ## NOTE: You will need to copy or rename the terraform.tfvars.sample file and replace the Billing Account value with your Billing Account.
+
+# Set Environment Variables
+BILLING_ACCOUNT='123456-123456-123456'
+
 cp terraform/terraform.tfvars.json.sample terraform/terraform.tfvars.json
-
-### Run this if using Mac OSX
 sed -ie 's|123456-123456-123456|'"${BILLING_ACCOUNT}"'|g' terraform/terraform.tfvars.json
+```
 
+<br>
 
+#### Deployment
+
+```
 # Change your path to the Terraform Environment directory within the project repository
 cd terraform/env-dev-us-central1
 
-# Create Symbolic Link to Terraform Variables File
-# ln -s ../terraform.tfvars.json terraform.tfvars.json # This is no longer necessary as we preserved the symbolic link in the git repository
+# Set Environment Variables
+PROJECT_NAME='test-gke-proj-001'
+GCS_BUCKET='gcs_bucket_name'
 
 # Create Terraform Workspace, Init, Import and Apply
 terraform init -backend-config="bucket=$GCS_BUCKET"
