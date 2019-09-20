@@ -4,8 +4,11 @@
 
 
 resource "google_compute_subnetwork" "vpc_subnet_kubernetes" {
+  depends_on = [
+    "google_project_service.compute"
+  ]
   name          = "kubernetes"
-  project       = "${terraform.workspace}"
+  project       = "${var.google_project}"
   network       = "${var.compute_network}"
   region        = "${var.region["single"]}"
   ip_cidr_range = "10.100.160.0/19"
@@ -22,4 +25,3 @@ resource "google_compute_subnetwork" "vpc_subnet_kubernetes" {
     }
   ]
 }
-

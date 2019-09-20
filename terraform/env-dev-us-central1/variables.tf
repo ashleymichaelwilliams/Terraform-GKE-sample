@@ -1,6 +1,7 @@
 # Module: env-dev-us-central1
 # File: variables.tf
-# Environmental variables specific for the 'dev-us' environment
+
+### Note: Environmental variables specific for the 'dev-us' environment
 
 
 

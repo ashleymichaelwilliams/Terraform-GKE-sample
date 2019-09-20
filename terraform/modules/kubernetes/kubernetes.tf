@@ -4,12 +4,16 @@
 
 
 resource "google_project_service" "compute" {
-  project    = "${terraform.workspace}"
+#  disable_dependent_services = true
+  project    = "${var.google_project}"
   service    = "compute.googleapis.com"
 }
 
 resource "google_project_service" "container" {
-  project    = "${terraform.workspace}"
+  depends_on = [
+    "google_project_service.compute"
+  ]
+  project    = "${var.google_project}"
   service    = "container.googleapis.com"
 }
 
@@ -17,9 +21,12 @@ resource "google_project_service" "container" {
 
 # Collect Availability Zones
 data "google_compute_zones" "available" {
-  provider = "google-beta"
-  depends_on = [ "google_project_service.compute" ]
-  region = "${var.region["single"]}"
+  depends_on = [
+    "google_project_service.compute"
+  ]
+  project    = "${var.google_project}"
+  provider   = "google-beta"
+  region     = "${var.region["single"]}"
 }
 
 
@@ -34,7 +41,8 @@ locals {
 
 # Create Kubernetes Cluster (Masters Only!)
 resource "google_container_cluster" "kubernetes-cluster" {
-  provider = "google-beta"
+  project    = "${var.google_project}"
+  provider   = "google-beta"
   depends_on = [
     "google_project_iam_member.kubernetes-service-account-editor",
     "google_service_account.kubernetes-service-account",
@@ -43,8 +51,8 @@ resource "google_container_cluster" "kubernetes-cluster" {
     "data.google_compute_zones.available"
   ]
 
-  name         = "kubernetes-cluster"
-  location     = "${var.region["single"]}"
+  name           = "kubernetes-cluster"
+  location       = "${var.region["single"]}"
   node_locations = [
     "${data.google_compute_zones.available.names[0]}",
     "${data.google_compute_zones.available.names[1]}",
@@ -52,20 +60,20 @@ resource "google_container_cluster" "kubernetes-cluster" {
   ]
 
   min_master_version = "${local.kubernetes_version}"
-  node_version = "${local.kubernetes_version}"
+  node_version       = "${local.kubernetes_version}"
 
-  network = "${var.compute_network}"
+  network    = "${var.compute_network}"
   subnetwork = "${google_compute_subnetwork.vpc_subnet_kubernetes.name}"
   ip_allocation_policy {
     cluster_secondary_range_name = "kubernetes-pods"
     services_secondary_range_name = "kubernetes-services"
   }
  
-  initial_node_count = 1
+  initial_node_count       = 1
   remove_default_node_pool = true
 
   node_config {
-    tags = ["kubernetes"]
+    tags         = ["kubernetes"]
     preemptible  = true
     machine_type = "${local.instance-type}"
     disk_size_gb = 50
@@ -74,7 +82,7 @@ resource "google_container_cluster" "kubernetes-cluster" {
     ]
     service_account = "${google_service_account.kubernetes-service-account.email}"
     labels = {
-      "cloud.google.com/gke-preemptible"   = "true"
+      "cloud.google.com/gke-preemptible" = "true"
     }
   }
 
@@ -82,11 +90,11 @@ resource "google_container_cluster" "kubernetes-cluster" {
     enabled = true
     resource_limits {
          resource_type = "cpu"
-         maximum = 4
+         maximum       = 4
       }
     resource_limits {
          resource_type = "memory"
-         maximum = 32
+         maximum       = 32
       }
   }
 
@@ -123,7 +131,7 @@ resource "google_container_cluster" "kubernetes-cluster" {
     ignore_changes = [
       node_version,
       node_locations,
-      node_pool,
+      node_pool
     ]
   }
 }
@@ -131,7 +139,8 @@ resource "google_container_cluster" "kubernetes-cluster" {
 
 # Create Kubernetes Node Pool
 resource "google_container_node_pool" "node-pool-a" {
-  provider = "google-beta"
+  project    = "${var.google_project}"
+  provider   = "google-beta"
   depends_on = [
     "google_project_iam_member.kubernetes-service-account-editor",
     "google_service_account.kubernetes-service-account",

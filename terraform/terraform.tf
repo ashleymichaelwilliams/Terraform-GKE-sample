@@ -1,48 +1,43 @@
 ### Main File: terraform.tf
 
 
-
-### Load TF Storage Backend
+### Load Terraform's GCS Storage Backend
 
 terraform {
   backend "gcs" {
-#    bucket = "gcs_bucket_name"
     prefix = "terraform/state"
+# The GCS Bucket name is handled by a variable
+# Uncomment if you want to statically set this value
+#   bucket = "gcs_bucket_name"
   }
 }
 
 
 
-### Load TF Providers
+### Load Terraform's Google Providers
 
 provider "google" {
-   project = "${terraform.workspace}" 
-   version     = "2.14"
+   project  = "${terraform.workspace}" 
+   version  = "2.14"
 }
 
 provider "google-beta" {
-   project = "${terraform.workspace}"
-   version     = "2.14"
+   project  = "${terraform.workspace}"
+   version  = "2.14"
 }
+
+
+### Load Misc Terraform's Providers
 
 provider "http" {
-   version     = "1.1.1"
+   version  = "1.1.1"
 }
 
 
 
-### Load GCP Project Resource
-
-# Declare Variables for Project Resource
+### Declare Variables for Project Resource
 variable "billing_account" {}
 variable "org_id" {}
-
-# Declare Project Resource (as it needs to be imported!)
-resource "google_project" "project" {
-  name                  = "${terraform.workspace}"
-  project_id            = "${terraform.workspace}"
-  billing_account       = "${var.billing_account}"
-}
 
 
 
@@ -50,17 +45,21 @@ resource "google_project" "project" {
 
 # Google Cloud Platform Project Module
 module "project" {
-  source = "../modules/project"
+  source          = "../modules/project"
+  billing_account = "${var.billing_account}"
+  org_id          = "${var.org_id}"
 }
 
 # Google VPC Networking Module
 module "vpc-networking" {
-  source = "../modules/vpc-networking"
+  source          = "../modules/vpc-networking"
+  google_project  = "${module.project.google_project}"
 }
 
 # Google Kubernetes Engine Module
 module "kubernetes" {
-  source = "../modules/kubernetes"
-  region = "${var.region}"
+  source          = "../modules/kubernetes"
+  google_project  = "${module.project.google_project}"
+  region          = "${var.region}"
   compute_network = "${module.vpc-networking.compute_network}"
 }

@@ -25,7 +25,7 @@ resource "google_compute_firewall" "allow-ssh-kubernetes" {
   }
 
   source_ranges = [ "${chomp("${data.http.local-public-ip.body}")}/32" ]
-  target_tags = [ "kubernetes" ]
+  target_tags   = [ "kubernetes" ]
 }
 
 
