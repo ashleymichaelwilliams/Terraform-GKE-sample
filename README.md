@@ -57,12 +57,11 @@ sed -i "s/123456-123456-123456/$BILLING_ACCOUNT/" terraform/terraform.tfvars.jso
 cd terraform/env-dev-us-central1
 
 # Create Symbolic Link to Terraform Variables File
-ln -s ../terraform.tfvars.json terraform.tfvars.json
+# ln -s ../terraform.tfvars.json terraform.tfvars.json # This is no longer necessary as we preserved the symbolic link in the git repository
 
 # Create Terraform Workspace, Init, Import and Apply
 terraform init -backend-config="bucket=$GCS_BUCKET"
 terraform workspace new $PROJECT_NAME
-terraform import google_project.project $PROJECT_NAME
 terraform apply -auto-approve
 ```
 
@@ -72,17 +71,20 @@ terraform apply -auto-approve
 ##### The following commands below have been tested and known to work on Mac OSX operating system
 
 ```
-cd ~/Downloads/
-
+# Set gcloud SDK Filename (which includes sdk version)
 GCLOUD_SDK_FILENAME='google-cloud-sdk-263.0.0-darwin-x86_64'
+
+# Download gcloud SDK and extract archive
+cd ~/Downloads/
 curl -s https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/$GCLOUD_SDK_FILENAME.tar.gz --output $GCLOUD_SDK_FILENAME.tar.gz
 gunzip -c $GCLOUD_SDK_FILENAME.tar.gz | tar xopf -
 
+# Install gcloud SDK
 cd ~/Downloads/google-cloud-sdk/
 ./install.sh -q --additional-components kubectl
 
 
-# Change directories to Git Project
+# Change directories to Terraform-GKE Project Folder
 cd ~/Repos/Terraform-GKE-sample
 
 # Authenticate to Google Cloud in active terminal shell
@@ -107,7 +109,7 @@ sed -ie 's|123456-123456-123456|'"${BILLING_ACCOUNT}"'|g' terraform/terraform.tf
 cd terraform/env-dev-us-central1
 
 # Create Symbolic Link to Terraform Variables File
-ln -s ../terraform.tfvars.json terraform.tfvars.json
+# ln -s ../terraform.tfvars.json terraform.tfvars.json # This is no longer necessary as we preserved the symbolic link in the git repository
 
 # Create Terraform Workspace, Init, Import and Apply
 terraform init -backend-config="bucket=$GCS_BUCKET"
