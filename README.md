@@ -82,7 +82,7 @@ unzip terraform_${TF_VERSION}_darwin_amd64.zip -d /usr/local/bin/
 
 ### Preparation
 
-The following step is only initially required for the necessary tools as well as confuring your billing account id.
+The following step is only initially required for the necessary tools as well as configuring your billing account id.
 
 ##### The following commands below have been tested and known to work on CentOS 7 operating system
 
