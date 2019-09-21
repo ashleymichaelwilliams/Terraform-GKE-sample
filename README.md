@@ -2,11 +2,10 @@
 
 #### This Terraform automation builds out a highly available managed Kubernetes cluster running on Google's GKE service across 3x availability zones runnnig "n1-standard-2" type preemptible nodes. <br> 
 
-> n1-standard-2 Spec: 2x CPUs and 7.5GB Memory for an approx cost $.02/hr (at the time of writing).
+> n1-standard-2 Spec: 2x CPUs and 7.5GB Memory (approx cost per preemptible instance is **$.02/hr** at the time of writing)
 
 #### Each availability zone will initially only have one instance each, which will auto-scale depending on your scheduled workload needs.
 
-<br>
 
 ##### Pricing Reference: https://cloud.google.com/compute/vm-instance-pricing#n1_predefined
 
