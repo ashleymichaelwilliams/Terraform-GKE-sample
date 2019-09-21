@@ -1,6 +1,7 @@
 # Terraform-GKE-sample
 
-#### This Terraform automation builds out a highly available managed Kubernetes cluster running on Google's GKE service across 3x availability zones runnnig "n1-standard-2" type preemptible nodes. <br> 
+#### This Terraform automation builds out a highly available managed Kubernetes cluster running on Google's GKE service. <br> 
+The cluster's node-pool is spread across 3x availability zones with *n1-standard-2* instance type preemptible nodes. <br> 
 
 > n1-standard-2 Spec: 2x CPUs and 7.5GB Memory (approx cost per preemptible instance is **$.02/hr** at the time of writing)
 
@@ -13,13 +14,13 @@
 
 ### Required Prerequisite Steps:
 
-1. Obtained Google billing account ID for associating your provisioned projects to your billing account.
+1. Obtain Google billing account ID for associating your provisioned projects to your billing account.
 2. Have an available Google Storage Bucket (GCS) used for Terraform state data.
-3. Installed the Terraform binary in your local operating system. (Mac OS-X or CentOS Linux are supported)
+3. Installed the Terraform binary in your local operating system. (Instructions below for CentOS 7 and Mac OSX)
 
 <br>
 
-#### Prerequisite 1: Obtained Google billing account ID for associating your provisioned projects to your billing account
+#### Prerequisite 1: Obtain Google billing account ID for associating your provisioned projects to your billing account
 
 You will need to associate your newly provisioned projects to your Google billing account.
 
@@ -80,6 +81,8 @@ unzip terraform_${TF_VERSION}_darwin_amd64.zip -d /usr/local/bin/
 <br>
 
 ### Preparation
+
+The following step is only initially required for the necessary tools as well as confuring your billing account id.
 
 ##### The following commands below have been tested and known to work on CentOS 7 operating system
 
@@ -159,6 +162,8 @@ sed -ie 's|123456-123456-123456|'"${BILLING_ACCOUNT}"'|g' terraform/terraform.tf
 <br>
 
 ### Deployment
+
+This is the only step that is needed once all of the above dependencies have been met...
 
 ```
 # Change your path to the Terraform Environment directory within the project repository
