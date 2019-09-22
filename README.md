@@ -53,6 +53,8 @@ gcloud project create ${TF_STATE_PROJECT_NAME}
 gsutil mb -p ${TF_STATE_PROJECT_NAME} -l us gs://${TF_STATE_BUCKET_NAME}
 ```
 
+Make a note of this GCS bucket name as you will need it in the later steps of these instructions.
+
 <br>
 
 #### Prerequisite 3: Installed the Terraform binary in your local operating system
