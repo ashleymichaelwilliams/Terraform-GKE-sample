@@ -1,10 +1,10 @@
 # Terraform-GKE-sample
 
 #### This Terraform automation builds out a highly available managed Kubernetes cluster running on Google's GKE service. <br> 
-The cluster's node-pool is spread across 3x availability zones with *n1-standard-2* instance type preemptible nodes. <br> 
+The cluster's node-pool is spread across 3x availability zones with *n1-standard-2* instance type pre-emptible nodes. <br> 
 
 > n1-standard-2 Spec: 2x CPUs and 7.5GB Memory <br> 
-Note: Approximate cost per preemptible instance is **$.02/hr** at the time of writing
+Note: Approximate cost per pre-emptible instance is **$.02/hr** at the time of writing
 
 #### Each availability zone will initially only have one instance each, which will auto-scale depending on your scheduled workload needs.
 
@@ -37,12 +37,12 @@ Make a note of this billing account ID as you will need it in the later steps of
 
 #### Prerequisite 2: Have an available Google Storage Bucket (GCS) used for Terraform state data.
 
-You will need to create a new GCS Bucket whinin a GCP project.
+You will need to create a new GCS Bucket within a GCP project.
 
 You can do this via the web console by navigating to: https://console.cloud.google.com/storage/create-bucket
 or via the gcloud SDK, by performing the following commands:
 ```bash
-# Set Environemtn Variables for Resource Names
+# Set Environment Variables for Resource Names
 TF_STATE_PROJECT_NAME='<MY_TF_STATE_PROJECT_NAME_GOES_HERE>'
 TF_STATE_BUCKET_NAME='<MY_TF_STATE_BUCKET_NAME_GOES_HERE>'
 
